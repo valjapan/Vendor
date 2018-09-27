@@ -39,5 +39,4 @@
         android:src="@drawable/ic_now_place"
         app:fabSize="normal" />
 
-
 </RelativeLayout>
