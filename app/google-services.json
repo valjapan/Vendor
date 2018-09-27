@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "699164015257",
+    "firebase_url": "https://vendor-valjapan.firebaseio.com",
+    "project_id": "vendor-valjapan",
+    "storage_bucket": "vendor-valjapan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699164015257:android:43a3a1045896bb88",
+        "android_client_info": {
+          "package_name": "com.valjapan.vendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "699164015257-okn2el1lhmcssqtjgq389nq2a76ilrv0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.valjapan.vendor",
+            "certificate_hash": "e8f9df68742413c7efb3187fad98c3a7e4baca76"
+          }
+        },
+        {
+          "client_id": "699164015257-fhq64ruotn1nuka1h8l5i36u32ig718j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_ahVMbASboeAKcPkNzw81glGemUygws8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "699164015257-fhq64ruotn1nuka1h8l5i36u32ig718j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
