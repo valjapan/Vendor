@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,46 +8,105 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
         android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/spnner"
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusableInTouchMode="true"
-            android:hint="タイトル"
-            android:singleLine="true"
-            android:textSize="32sp" />
+            android:layout_height="0dp"
+            android:layout_weight="3" />
 
-        <TextView
-            android:id="@+id/textVIew2"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="本文"
-            android:textSize="18sp" />
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:background="@android:color/transparent"
-            android:textSize="18sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_add"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/titleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="種類"
+                    android:textSize="16sp" />
+
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="8"
+                    android:focusableInTouchMode="true"
+                    android:hint="タイトル"
+                    android:singleLine="true"
+                    android:textSize="32sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_add"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_add"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/contextTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="内容"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/contentEditText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:layout_weight="8"
+                        android:gravity="center_vertical"
+                        android:hint="例:他2台あり"
+                        android:singleLine="true"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button"
+                android:onClick="saveData"
+                android:text="追加する"
+                android:textColor="@color/grey_white_1000"
+                android:textSize="32sp" />
+
+        </LinearLayout>
+
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="save"
-        android:src="@drawable/ic_save"
-        app:fabSize="normal" />
-
-
 
 </RelativeLayout>

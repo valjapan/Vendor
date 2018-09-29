@@ -98,7 +98,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         startLocationUpdates();
     }
 
-
+    /*
+    位置情報を受け取るクラス
+     */
 //    locationのコールバックを受け取る
 
     private void createLocationCallback() {
@@ -340,6 +342,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
 
+    /*
+    GoogleMapApiを利用したクラス
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -357,6 +362,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void addVendor(View v) {
         Intent intent = new Intent(getApplication(), AddActivity.class);
+        intent.putExtra("LocateX", locateX);
+        intent.putExtra("LocateY", locateY);
         startActivity(intent);
     }
 

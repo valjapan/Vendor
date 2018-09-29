@@ -11,15 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-public class MapsActivity extends AppCompatActivity  {
+public class MapsActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSION = 10;
 
 
@@ -28,9 +20,9 @@ public class MapsActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        Log.d("MainActivity","onCreate()");
+        Log.d("MainActivity", "onCreate()");
 
-        if (Build.VERSION.SDK_INT >= 23){
+        if (Build.VERSION.SDK_INT >= 23) {
             checkPermission();
         } else {
             locationActivity();
@@ -38,6 +30,7 @@ public class MapsActivity extends AppCompatActivity  {
 
 
     }
+
     //    位置情報許可の確認
     public void checkPermission() {
 //        すでに許可している
