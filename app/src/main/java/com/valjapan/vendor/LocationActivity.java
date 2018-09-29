@@ -138,6 +138,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             setIcon(locateX, locateY);
 
             if (!checkFiretLocation) {
+                Log.d("LocationActivity", "初回の読み込みをしました");
                 setNowPlace(locateX, locateY);
                 checkFiretLocation = true;
             }
@@ -325,7 +326,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             Log.d("debug", "stopLocationUpdates: " +
                     "updates never requested, no-op.");
 
-
             return;
         }
 
@@ -348,7 +348,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         latlng = new LatLng(35.6847212, 139.7504106);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
 
-//            上のはクラッシュするらしい
     }
 
     public void searchMyPlace(View v) {
