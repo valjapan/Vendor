@@ -43,11 +43,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
+//    FirebaseDatabase database = FirebaseDatabase.getInstance();
+//    DatabaseReference reference = database.getReference();
+//    public CustomAdapter mCustomAdapter;
+
+
     //    Fused Location Provider API.
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -77,8 +89,72 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+//        mCustomAdapter = new CustomAdapter(this, 0, new ArrayList<PlaceData>());
+//
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         settingsClient = LocationServices.getSettingsClient(this);
+//
+//        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnap) {
+//                for (DataSnapshot dataSnapshot : dataSnap.getChildren()) {
+//                    String kind = (String) dataSnapshot.child("vendingKind").getValue();
+//                    String content = (String) dataSnapshot.child("content").getValue();
+//                    double locateX = (double) dataSnapshot.child("locateX").getValue();
+//                    double locateY = (double) dataSnapshot.child("locateY").getValue();
+//
+//                    // このforループで、Todoごとのkey, title, isDoneが取得できているので、
+//                    // Todoクラスを利用し、Hashmapに追加するなどして保存する。
+//
+//                    setGetIcon(kind, content, locateX, locateY);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Log.d("LocationActivity", "onCancelled()");
+//            }
+//        });
+
+//        reference.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                PlaceData placeData = dataSnapshot.getValue(PlaceData.class);
+//                mCustomAdapter.add(placeData);
+//                mCustomAdapter.notifyDataSetChanged();
+////                保存した情報を用いた描画処理を記載している。
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                PlaceData result = dataSnapshot.getValue(PlaceData.class);
+////                アイテムのリストを取得するか、アイテムのリストへの追加がないかリッスンします。
+//                if (result == null) return;
+//
+//                PlaceData placeData = mCustomAdapter.getPlaceData(result.getFireBaseKey());
+//                placeData.setVendingKind(result.getVendingKind());
+//                placeData.setContent(result.getContent());
+//                placeData.setLocateX(result.getLocateX());
+//                placeData.setLocateY(result.getLocateY());
+//
+//                mCustomAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
         priority = 0;
 
@@ -382,6 +458,18 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
+                .icon(markerIcon)
+        );
+    }
+
+    private void setGetIcon(String kind, String contnt, double latitude, double longitude) {
+
+        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_person_pin_circle);
+        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .title(kind + "(" + contnt + ")")
                 .icon(markerIcon)
         );
     }

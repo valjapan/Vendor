@@ -5,17 +5,29 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class AddActivity extends AppCompatActivity {
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class AddActivity extends AppCompatActivity implements OnMapReadyCallback {
     private String spinnerItems[] = {"コカコーラ", "DyDo", "アサヒ", "キリン", "サントリー", "ポッカサッポロ", "明治", "災害支援型", "その他"};
     private double locateX, locateY;
     EditText contentEdiText;
     String context;
+    private GoogleMap previewMap;
+    private LatLng latlng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +66,10 @@ public class AddActivity extends AppCompatActivity {
 
             }
         });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_add);
+        mapFragment.getMapAsync(this);
     }
 
     public void saveData(View v) {
@@ -66,4 +82,36 @@ public class AddActivity extends AppCompatActivity {
         finish();
     }
 
+    /*
+    GoogleMapApiを利用したクラス
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        previewMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        latlng = new LatLng(locateX, locateY);
+        previewMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+
+        // marker 追加
+        previewMap.addMarker(new MarkerOptions().position(latlng).title("この場所を追加します"));
+        // camera 移動
+        previewMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_location) {
+            previewMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
+        }
+        return true;
+    }
 }
