@@ -3,11 +3,11 @@ package com.valjapan.vendor;
 public class PlaceData {
     public String vendingKind;
     public String content;
-    public double locateX;
-    public double locateY;
+    public String locateX;
+    public String locateY;
     public String fireBaseKey;
 
-    public PlaceData(String fireBaseKey, String vendingKind, String content, double locateX, double locateY) {
+    public PlaceData(String fireBaseKey, String vendingKind, String content, String locateX, String locateY) {
         this.fireBaseKey = fireBaseKey;
         this.vendingKind = vendingKind;
         this.content = content;
@@ -43,19 +43,19 @@ public class PlaceData {
         this.fireBaseKey = fireBaseKey;
     }
 
-    public double getLocateX() {
+    public String getLocateX() {
         return locateX;
     }
 
-    public void setLocateX(double locateX) {
+    public void setLocateX(String locateX) {
         this.locateX = locateX;
     }
 
-    public double getLocateY() {
+    public String getLocateY() {
         return locateY;
     }
 
-    public void setLocateY(double locateY) {
+    public void setLocateY(String locateY) {
         this.locateY = locateY;
     }
 }

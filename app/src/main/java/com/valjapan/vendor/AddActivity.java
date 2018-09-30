@@ -19,12 +19,19 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class AddActivity extends AppCompatActivity implements OnMapReadyCallback {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference mDatabase = database.getReference();
+
     private String spinnerItems[] = {"コカコーラ", "DyDo", "アサヒ", "キリン", "サントリー", "ポッカサッポロ", "明治", "災害支援型", "その他"};
     private double locateX, locateY;
     EditText contentEdiText;
     String context;
+    private String item;
     private GoogleMap previewMap;
     private LatLng latlng;
 
@@ -57,7 +64,7 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Spinner spinner = (Spinner) parent;
-                String item = (String) spinner.getSelectedItem();
+                item = (String) spinner.getSelectedItem();
                 Log.d("AddActivity", item);
             }
 
@@ -74,12 +81,24 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void saveData(View v) {
         context = contentEdiText.getText().toString();
+        String key = mDatabase.push().getKey();
+        String latitude = String.valueOf(locateX);
+        String longtude = String.valueOf(locateY);
         if (TextUtils.isEmpty(context)) {
             context = "特になし";
         }
         Log.d("AddActivity", "保存ボタンを押しました");
         Log.d("AddActivity", "EditTextの内容は -> " + context);
-        finish();
+
+        PlaceData placeData = new PlaceData(key, item, context, latitude, longtude);
+
+        mDatabase.child(key).setValue(placeData).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                finish();
+            }
+        });
+
     }
 
     /*
@@ -88,7 +107,7 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         previewMap = googleMap;
-
+        previewMap.setBuildingsEnabled(false);
         // Add a marker in Sydney and move the camera
         latlng = new LatLng(locateX, locateY);
         previewMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
