@@ -19,8 +19,7 @@ public class MapsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        Log.d("MainActivity", "onCreate()");
+        Log.d("MapsActivity", "onCreate()");
 
         if (Build.VERSION.SDK_INT >= 23) {
             checkPermission();
@@ -59,8 +58,7 @@ public class MapsActivity extends AppCompatActivity {
         }
     }
 
-//    結果の受け取り
-
+    //    結果の受け取り
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION) {
@@ -79,6 +77,7 @@ public class MapsActivity extends AppCompatActivity {
     private void locationActivity() {
         Intent intent = new Intent(getApplication(), LocationActivity.class);
         startActivity(intent);
+//        Activityを終了しないと、裏側で何も設定していないMapが表示されてしまう
         finish();
     }
 

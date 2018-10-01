@@ -18,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +28,7 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
 
-    private String spinnerItems[] = {"コカコーラ", "DyDo", "アサヒ", "キリン", "サントリー", "ポッカサッポロ", "明治", "災害支援型", "その他"};
+    private String spinnerItems[] = {"コカコーラ", "DyDo", "アサヒ", "キリン", "サントリー", "ポッカサッポロ", "伊藤園", "災害支援型", "その他"};
     private double locateX, locateY;
     EditText contentEdiText;
     String context;
@@ -92,6 +93,7 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
 
         PlaceData placeData = new PlaceData(key, item, context, latitude, longtude);
 
+//        Firebaseにデータを送信する
         mDatabase.child(key).setValue(placeData).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -119,11 +121,6 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

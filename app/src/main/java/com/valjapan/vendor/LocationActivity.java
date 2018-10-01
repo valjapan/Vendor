@@ -58,6 +58,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
+    //    FirebaseDatabaseの利用
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference();
 
@@ -71,9 +72,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private LocationRequest locationRequest;
     private Location location;
 
-    private GoogleMap mMap;
-
-
     private String lastUpdateTime;
     private Boolean requestingLocationUpdates;
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
@@ -81,6 +79,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private String textLog;
 
     //    GoogleMaps
+    private GoogleMap mMap;
     private LatLng latlng;
     double locateX, locateY;
     private Boolean checkFiretLocation = false;
@@ -97,27 +96,33 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         settingsClient = LocationServices.getSettingsClient(this);
 
+//        FireBaseにあるデータの読み込みとリアルタイム同期
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnap, @Nullable String s) {
+//                アイテムを取得、追加がないか確認する。
                 Log.d("LocationActivity", "onChildAdded:" + dataSnap.getKey());
 
-                PlaceData result = dataSnap.getValue(PlaceData.class);
+//                PlaceData result = dataSnap.getValue(PlaceData.class);
+//                ↑これいるかな？
+
                 String key = (String) dataSnap.child("fireBaseKey").getValue();
                 String kind = (String) dataSnap.child("vendingKind").getValue();
                 String content = (String) dataSnap.child("content").getValue();
                 String locateX = (String) dataSnap.child("locateX").getValue();
                 String locateY = (String) dataSnap.child("locateY").getValue();
+
+//                Firebaseにあるデータを元にアイコンを１つずつ置いて行く
                 setFireBaseDataIcon(key, kind, content, locateX, locateY);
 
-//                保存した情報を用いた描画処理を記載している。
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnap, @Nullable String s) {
                 Log.d("LocationActivity", "onChildChanged:" + dataSnap.getKey());
                 PlaceData result = dataSnap.getValue(PlaceData.class);
-//                アイテムのリストを取得するか、アイテムのリストへの追加がないかリッスンします。
+//              Firebaseに変更がないかどうか確認する。
+//              もし何も変更がないならこのまま返す。
                 if (result == null) return;
 
                 String key = (String) dataSnap.child("fireBaseKey").getValue();
@@ -126,31 +131,33 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 String locateX = (String) dataSnap.child("locateX").getValue();
                 String locateY = (String) dataSnap.child("locateY").getValue();
 
+//                Firebaseにあるデータを元にアイコンを１つずつ置いて行く
                 setFireBaseDataIcon(key, kind, content, locateX, locateY);
-//                    マーカーを置くメソッドに行く
 
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnap) {
                 Log.d("LocationActivity", "onChildRemoved:" + dataSnap.getKey());
+//                Firebaseから削除されたか確認する
                 String key = (String) dataSnap.child("fireBaseKey").getValue();
                 String kind = (String) dataSnap.child("vendingKind").getValue();
                 String content = (String) dataSnap.child("content").getValue();
                 String locateX = (String) dataSnap.child("locateX").getValue();
                 String locateY = (String) dataSnap.child("locateY").getValue();
 
+//                マーカーを取り除くメソッドに行く
                 removeFireBaseDataIcon(key, kind, content, locateX, locateY);
-//                    マーカーを置くメソッドに行く
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnap, @Nullable String s) {
-
+//                Firebaseに順番の変更がないか確認する
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+//                ログを記録するなどError時の処理を記載する。
 
             }
         });
@@ -173,11 +180,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         startLocationUpdates();
     }
 
-    /*
-    位置情報を受け取るクラス
+    /**
+     * 位置情報を受け取るクラス
      */
-//    locationのコールバックを受け取る
 
+//    locationのコールバックを受け取る
     private void createLocationCallback() {
         locationCallback = new LocationCallback() {
             @Override
@@ -427,7 +434,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         // Add a marker in Tokyo and move the camera
         latlng = new LatLng(35.6847212, 139.7504106);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
 
         Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(latlng)
@@ -451,7 +458,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     public void setNowPlace(double locateX, double locateY) {
         mMap.getCameraPosition();
         CameraUpdate cUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(locateX, locateY), 16);
-        mMap.moveCamera(cUpdate);
+        mMap.animateCamera(cUpdate);
     }
 
     private void setIcon(double latitude, double longitude) {
@@ -479,26 +486,28 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private void setFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
 //        Firebaseから取得した座標をここでマーカーを置く
         Log.d("LocationActivity", key + " " + kind + " " + content + " " + latitude + " " + longitude);
-//        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_person_pin_circle);
-//        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-//        TODO とりあえずマーカーはデフォルトで
+//        マーカーを自由に画像を置く
+        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_person_pin_circle);
+        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 
         double locateX = Double.parseDouble(latitude);
         double locateY = Double.parseDouble(longitude);
 
-
         LatLng point = new LatLng(locateX, locateY);
+
+//        ピンの設定
         Marker marker = mMap.addMarker(new MarkerOptions()
+//                ピンの場所を設定
                 .position(point)
+//                ピンのタイトルの設定
                 .title(kind)
-                .snippet(content));
+//                ピンの詳細の設定
+                .snippet(content)
+//                ピンのアイコンの設定
+                .icon(markerIcon));
 
+//        HashMapを使って保存している
         hashMapMarker.put(key, marker);
-
-//        MarkerOptions options = new MarkerOptions();//ピンの設定
-//        options.position(latLng);//ピンの場所を指定
-//        options.title(kind + "(" + content + ")");//マーカーの吹き出しの設定
-//        mMap.addMarker(options);//ピンの設置
 
     }
 
