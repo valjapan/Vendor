@@ -38,6 +38,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +52,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -80,6 +82,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private LatLng latlng;
     double locateX, locateY;
     private Boolean checkFiretLocation = false;
+
+    HashMap<String, Marker> hashMapMarker = new HashMap<>();
+    private String myPlace = "MyPlace";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,7 +220,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 
             setIcon(locateX, locateY);
-//            現在位置を更新する
+//            TODO 現在位置を更新する
 
             if (!checkFiretLocation) {
                 Log.d("LocationActivity", "初回の読み込みをしました");
@@ -426,9 +432,16 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+
         // Add a marker in Tokyo and move the camera
         latlng = new LatLng(35.6847212, 139.7504106);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+
+        Marker marker = mMap.addMarker(new MarkerOptions()
+                .position(latlng)
+        );
+        hashMapMarker.put(myPlace, marker);
+
 
     }
 
@@ -456,18 +469,29 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_my_location);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 
-        mMap.clear();
-//        一度マーカーを全て消す
-        mMap.addMarker(new MarkerOptions()
+//        mMap.clear();
+
+
+        Marker deleteMarker = hashMapMarker.get(myPlace);
+
+        deleteMarker.remove();
+
+        hashMapMarker.remove(myPlace);
+
+
+        Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .icon(markerIcon)
         );
-//        現在位置をマーカーとして置く
+
+        hashMapMarker.put(myPlace, marker);
+
+
     }
 
-    private void setFireBaseDataIcon(String key, String kind, String contnt, String latitude, String longitude) {
+    private void setFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
 //        Firebaseから取得した座標をここでマーカーを置く
-        Log.d("LocationActivity", key + " " + kind + " " + contnt + " " + latitude + " " + longitude);
+        Log.d("LocationActivity", key + " " + kind + " " + content + " " + latitude + " " + longitude);
 //        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_person_pin_circle);
 //        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 //        TODO とりあえずマーカーはデフォルトで
@@ -475,12 +499,19 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         double locateX = Double.parseDouble(latitude);
         double locateY = Double.parseDouble(longitude);
 
-        LatLng point = new LatLng(locateX, locateY);
 
-        MarkerOptions options = new MarkerOptions();//ピンの設定
-        options.position(point);//ピンの場所を指定
-        options.title(kind + "(" + contnt + ")");//マーカーの吹き出しの設定
-        mMap.addMarker(options);//ピンの設置
+        LatLng point = new LatLng(locateX, locateY);
+        Marker marker = mMap.addMarker(new MarkerOptions()
+                .position(point)
+                .title(kind)
+                .snippet(content));
+
+        hashMapMarker.put(key, marker);
+
+//        MarkerOptions options = new MarkerOptions();//ピンの設定
+//        options.position(latLng);//ピンの場所を指定
+//        options.title(kind + "(" + content + ")");//マーカーの吹き出しの設定
+//        mMap.addMarker(options);//ピンの設置
 
     }
 
