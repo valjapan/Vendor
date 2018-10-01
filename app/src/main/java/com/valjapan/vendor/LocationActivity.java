@@ -2,6 +2,7 @@ package com.valjapan.vendor;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -14,8 +15,10 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -44,11 +47,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -57,7 +60,6 @@ import java.util.HashMap;
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference();
-
 
     //    Fused Location Provider API.
     private FusedLocationProviderClient fusedLocationClient;
@@ -95,73 +97,63 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         settingsClient = LocationServices.getSettingsClient(this);
 
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnap) {
-                for (DataSnapshot dataSnapshot : dataSnap.getChildren()) {
-                    String key = (String) dataSnapshot.child("fireBaseKey").getValue();
-                    String kind = (String) dataSnapshot.child("vendingKind").getValue();
-                    String content = (String) dataSnapshot.child("content").getValue();
-                    String locateX = (String) dataSnapshot.child("locateX").getValue();
-                    String locateY = (String) dataSnapshot.child("locateY").getValue();
-                    // このforループで、取得できるはず！
+            public void onChildAdded(@NonNull DataSnapshot dataSnap, @Nullable String s) {
+                Log.d("LocationActivity", "onChildAdded:" + dataSnap.getKey());
 
-                    setFireBaseDataIcon(key, kind, content, locateX, locateY);
+                PlaceData result = dataSnap.getValue(PlaceData.class);
+                String key = (String) dataSnap.child("fireBaseKey").getValue();
+                String kind = (String) dataSnap.child("vendingKind").getValue();
+                String content = (String) dataSnap.child("content").getValue();
+                String locateX = (String) dataSnap.child("locateX").getValue();
+                String locateY = (String) dataSnap.child("locateY").getValue();
+                setFireBaseDataIcon(key, kind, content, locateX, locateY);
+
+//                保存した情報を用いた描画処理を記載している。
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnap, @Nullable String s) {
+                Log.d("LocationActivity", "onChildChanged:" + dataSnap.getKey());
+                PlaceData result = dataSnap.getValue(PlaceData.class);
+//                アイテムのリストを取得するか、アイテムのリストへの追加がないかリッスンします。
+                if (result == null) return;
+
+                String key = (String) dataSnap.child("fireBaseKey").getValue();
+                String kind = (String) dataSnap.child("vendingKind").getValue();
+                String content = (String) dataSnap.child("content").getValue();
+                String locateX = (String) dataSnap.child("locateX").getValue();
+                String locateY = (String) dataSnap.child("locateY").getValue();
+
+                setFireBaseDataIcon(key, kind, content, locateX, locateY);
 //                    マーカーを置くメソッドに行く
-                }
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnap) {
+                Log.d("LocationActivity", "onChildRemoved:" + dataSnap.getKey());
+                String key = (String) dataSnap.child("fireBaseKey").getValue();
+                String kind = (String) dataSnap.child("vendingKind").getValue();
+                String content = (String) dataSnap.child("content").getValue();
+                String locateX = (String) dataSnap.child("locateX").getValue();
+                String locateY = (String) dataSnap.child("locateY").getValue();
+
+                removeFireBaseDataIcon(key, kind, content, locateX, locateY);
+//                    マーカーを置くメソッドに行く
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnap, @Nullable String s) {
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("LocationActivity", "onCancelled()");
+
             }
         });
-//
-//        reference.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                for (DataSnapshot dataS : dataSnapshot.getChildren()) {
-//                    String kind = (String) dataS.child("vendingKind").getValue();
-//                    String content = (String) dataS.child("content").getValue();
-//                    String locateX = (String) dataS.child("locateX").getValue();
-//                    String locateY = (String) dataS.child("locateY").getValue();
-//
-//                    setFireBaseDataIcon(kind, content, locateX, locateY);
-//                }
-////                保存した情報を用いた描画処理を記載している。
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                PlaceData result = dataSnapshot.getValue(PlaceData.class);
-////                アイテムのリストを取得するか、アイテムのリストへの追加がないかリッスンします。
-//                if (result == null) return;
-//
-//                for (DataSnapshot dataS : dataSnapshot.getChildren()) {
-//                    String kind = (String) dataS.child("vendingKind").getValue();
-//                    String content = (String) dataS.child("content").getValue();
-//                    String locateX = (String) dataS.child("locateX").getValue();
-//                    String locateY = (String) dataS.child("locateY").getValue();
-//
-//                    setFireBaseDataIcon(kind, content, locateX, locateY);
-//                }
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
 
         priority = 0;
 
@@ -449,14 +441,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         setNowPlace(locateX, locateY);
     }
 
-
     public void addVendor(View v) {
         Intent intent = new Intent(getApplication(), AddActivity.class);
         intent.putExtra("LocateX", locateX);
         intent.putExtra("LocateY", locateY);
         startActivity(intent);
     }
-
 
     public void setNowPlace(double locateX, double locateY) {
         mMap.getCameraPosition();
@@ -468,9 +458,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_my_location);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-
-//        mMap.clear();
-
 
         Marker deleteMarker = hashMapMarker.get(myPlace);
 
@@ -515,6 +502,15 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
+    private void removeFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
+        //        Firebaseから削除する座標を取得し、マーカーを取り除く
+        Log.d("LocationActivity", "Delete is " + key + " " + kind + " " + content + " " + latitude + " " + longitude);
+        Marker deleteMarker = hashMapMarker.get(key);
+        deleteMarker.remove();
+        hashMapMarker.remove(key);
+
+    }
+
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -530,6 +526,28 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         super.onPause();
         // バッテリー消費を抑えてLocation requestを止める
         stopLocationUpdates();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // 戻るボタンの処理
+            new AlertDialog.Builder(this)
+                    .setTitle("アプリの終了")
+                    .setMessage("Vendorを終了しますか？")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // OK button pressed
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
 
 }

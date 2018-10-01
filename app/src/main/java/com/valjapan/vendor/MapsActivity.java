@@ -79,6 +79,7 @@ public class MapsActivity extends AppCompatActivity {
     private void locationActivity() {
         Intent intent = new Intent(getApplication(), LocationActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
