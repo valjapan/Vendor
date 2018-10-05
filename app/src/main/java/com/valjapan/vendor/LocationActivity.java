@@ -58,7 +58,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
     //    FirebaseDatabaseの利用
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference();
@@ -536,6 +536,15 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+
+    /** Called when the user clicks a marker. */
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+
+        return false;
     }
 
     @Override
