@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -78,6 +79,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private int priority = 0;
     private String textLog;
 
+    LottieAnimationView animationView;
+
     //    GoogleMaps
     private GoogleMap mMap;
     private LatLng latlng;
@@ -95,6 +98,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         settingsClient = LocationServices.getSettingsClient(this);
+
+        animationView = (LottieAnimationView) findViewById(R.id.animation_view);
+        animationView.setAnimation("location_animation.json");
+        animationView.loop(true);
+        animationView.playAnimation();
+        animationView.setVisibility(View.VISIBLE);
 
 //        FireBaseにあるデータの読み込みとリアルタイム同期
         reference.addChildEventListener(new ChildEventListener() {
@@ -219,6 +228,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 
             setIcon(locateX, locateY);
+            animationView.setVisibility(View.INVISIBLE);
 //            TODO 現在位置を更新する
 
             if (!checkFiretLocation) {
@@ -254,7 +264,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         if (priority == 0) {
             /**
-             *
              * 高い精度の位置情報を取得したい場合、
              * インターバルを例えば5000msecに設定すれば、
              * マップアプリのようなリアルタイム即位となる。
@@ -480,14 +489,13 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         hashMapMarker.put(myPlace, marker);
 
-
     }
 
     private void setFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
 //        Firebaseから取得した座標をここでマーカーを置く
         Log.d("LocationActivity", key + " " + kind + " " + content + " " + latitude + " " + longitude);
 //        マーカーを自由に画像を置く
-        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_person_pin_circle);
+        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_location_pin_02);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 
         double locateX = Double.parseDouble(latitude);
@@ -512,7 +520,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void removeFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
-        //        Firebaseから削除する座標を取得し、マーカーを取り除く
+//        Firebaseから削除する座標を取得し、マーカーを取り除く
         Log.d("LocationActivity", "Delete is " + key + " " + kind + " " + content + " " + latitude + " " + longitude);
         Marker deleteMarker = hashMapMarker.get(key);
         deleteMarker.remove();

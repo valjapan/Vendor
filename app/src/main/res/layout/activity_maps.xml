@@ -37,4 +37,14 @@
         android:src="@drawable/ic_now_place"
         app:fabSize="normal" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foregroundGravity="center"
+        android:visibility="visible"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="location_animation.json"
+        app:lottie_loop="true" />
+
 </RelativeLayout>

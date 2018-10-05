@@ -27,7 +27,6 @@ public class MapsActivity extends AppCompatActivity {
             locationActivity();
         }
 
-
     }
 
     //    位置情報許可の確認
