@@ -20,6 +20,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -58,7 +61,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
+public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowCloseListener {
     //    FirebaseDatabaseの利用
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference();
@@ -72,6 +75,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
     private Location location;
+    private Marker deleteLocationMarker;
+    private Marker deleteCheckMarker;
 
     private String lastUpdateTime;
     private Boolean requestingLocationUpdates;
@@ -79,16 +84,22 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private int priority = 0;
     private String textLog;
 
+    private Animation inAnimation;
+    private Animation outAnimation;
+
     LottieAnimationView animationView;
 
     //    GoogleMaps
     private GoogleMap mMap;
     private LatLng latlng;
     double locateX, locateY;
-    private Boolean checkFiretLocation = false;
+    private Boolean checkFireLocation = false;
 
     HashMap<String, Marker> hashMapMarker = new HashMap<>();
+    HashMap<Marker, String> deleteHashMapMarker = new HashMap<>();
     private String myPlace = "MyPlace";
+
+    private FrameLayout deleteLayout;
 
 
     @Override
@@ -104,6 +115,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         animationView.loop(true);
         animationView.playAnimation();
         animationView.setVisibility(View.VISIBLE);
+
+        inAnimation = (Animation) AnimationUtils.loadAnimation(this, R.anim.in_animation);
+        outAnimation = (Animation) AnimationUtils.loadAnimation(this, R.anim.out_animation);
+
+        deleteLayout = (FrameLayout) findViewById(R.id.delete_layout);
+        deleteLayout.setVisibility(View.INVISIBLE);
 
 //        FireBaseにあるデータの読み込みとリアルタイム同期
         reference.addChildEventListener(new ChildEventListener() {
@@ -231,10 +248,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             animationView.setVisibility(View.INVISIBLE);
 //            TODO 現在位置を更新する
 
-            if (!checkFiretLocation) {
+            if (!checkFireLocation) {
                 Log.d("LocationActivity", "初回の読み込みをしました");
                 setNowPlace(locateX, locateY);
-                checkFiretLocation = true;
+                checkFireLocation = true;
             }
 
             StringBuilder stuBuf = new StringBuilder("---------- UpdateLocation ---------- \n");
@@ -440,7 +457,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
         // Add a marker in Tokyo and move the camera
         latlng = new LatLng(35.6847212, 139.7504106);
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
@@ -450,7 +466,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         );
         hashMapMarker.put(myPlace, marker);
 
-
+//        リスナーをセットする
+        mMap.setOnMarkerClickListener(this);
+        mMap.setOnInfoWindowCloseListener(this);
     }
 
     public void searchMyPlace(View v) {
@@ -488,7 +506,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         );
 
         hashMapMarker.put(myPlace, marker);
-
+        deleteCheckMarker = marker;
     }
 
     private void setFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
@@ -516,6 +534,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 //        HashMapを使って保存している
         hashMapMarker.put(key, marker);
+        deleteHashMapMarker.put(marker, key);
 
     }
 
@@ -539,13 +558,55 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-    /** Called when the user clicks a marker. */
+    //    マーカーをクリックした時のリスナー
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
+        Log.d("LocationActivity", "タッチしているのは" + String.valueOf(marker));
+        Log.d("LocationActivity", "自分のマーカーは" + String.valueOf(deleteCheckMarker));
+
+        Marker checkMyPlace = hashMapMarker.get(myPlace);
+
+        if (checkMyPlace.equals(marker)) {
+            Log.d("LocationActivity", "一致しています！");
+            deleteLayout.setVisibility(View.INVISIBLE);
+
+        } else {
+            deleteLayout.startAnimation(inAnimation);
+            deleteLayout.setVisibility(View.VISIBLE);
+            deleteLocationMarker = marker;
+        }
 
         return false;
     }
+
+    //    マーカークリックをして対象を選んだが、他の場所をクリックして消す動作のリスナー
+    @Override
+    public void onInfoWindowClose(Marker marker) {
+        deleteLayout.startAnimation(outAnimation);
+        deleteLayout.setVisibility(View.INVISIBLE);
+    }
+
+    public void deleteMarker(View v) {
+        Log.d("LocationActivity", String.valueOf(deleteCheckMarker) + "\n" + String.valueOf(deleteLocationMarker));
+        if (deleteCheckMarker.equals(deleteLocationMarker)) {
+        } else {
+            String firebaseKey = deleteHashMapMarker.get(deleteLocationMarker);
+            reference.child(firebaseKey).removeValue();
+
+            deleteHashMapMarker.remove(deleteLocationMarker);
+            deleteLayout.startAnimation(outAnimation);
+            deleteLayout.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    public void deleteMarkerCancel(View v) {
+        deleteLayout.startAnimation(outAnimation);
+        deleteLayout.setVisibility(View.INVISIBLE);
+
+    }
+
 
     @Override
     protected void onPause() {
