@@ -40,13 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LocationActivity">
+        <activity android:name=".LocationActivity"></activity>
 
-        </activity>
-
-        <activity android:name=".AddActivity">
-
-        </activity>
+        <activity android:name=".AddActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

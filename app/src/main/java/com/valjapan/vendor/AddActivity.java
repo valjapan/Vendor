@@ -118,6 +118,7 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
         previewMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
 
         previewMap.getUiSettings().setScrollGesturesEnabled(false);
+        previewMap.getUiSettings().setZoomGesturesEnabled(false);
 
     }
 
