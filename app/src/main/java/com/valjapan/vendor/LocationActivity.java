@@ -127,7 +127,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnap, @Nullable String s) {
 //                アイテムを取得、追加がないか確認する。
-                Log.d("LocationActivity", "onChildAdded:" + dataSnap.getKey());
+//                Log.d("LocationActivity", "onChildAdded:" + dataSnap.getKey());
 
 //                PlaceData result = dataSnap.getValue(PlaceData.class);
 //                ↑これいるかな？
@@ -145,7 +145,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnap, @Nullable String s) {
-                Log.d("LocationActivity", "onChildChanged:" + dataSnap.getKey());
+//                Log.d("LocationActivity", "onChildChanged:" + dataSnap.getKey());
                 PlaceData result = dataSnap.getValue(PlaceData.class);
 //              Firebaseに変更がないかどうか確認する。
 //              もし何も変更がないならこのまま返す。
@@ -164,7 +164,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnap) {
-                Log.d("LocationActivity", "onChildRemoved:" + dataSnap.getKey());
+//                Log.d("LocationActivity", "onChildRemoved:" + dataSnap.getKey());
 //                Firebaseから削除されたか確認する
                 String key = (String) dataSnap.child("fireBaseKey").getValue();
                 String kind = (String) dataSnap.child("vendingKind").getValue();
@@ -195,7 +195,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         buildLocationSettingRequest();
 
         textLog = "onCreate()\n";
-        Log.d("LocationActivity", "onCreate()");
+//        Log.d("LocationActivity", "onCreate()");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -249,7 +249,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 //            TODO 現在位置を更新する
 
             if (!checkFireLocation) {
-                Log.d("LocationActivity", "初回の読み込みをしました");
+//                Log.d("LocationActivity", "初回の読み込みをしました");
                 setNowPlace(locateX, locateY);
                 checkFireLocation = true;
             }
@@ -271,7 +271,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             textLog += stuBuf;
 
-            Log.d("LocationActivity", textLog);
+//            Log.d("LocationActivity", textLog);
 
         }
     }
@@ -433,8 +433,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         textLog += "onStop()\n";
 
         if (!requestingLocationUpdates) {
-            Log.d("debug", "stopLocationUpdates: " +
-                    "updates never requested, no-op.");
+//            Log.d("debug", "stopLocationUpdates: " +
+//                    "updates never requested, no-op.");
 
             return;
         }
@@ -511,7 +511,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void setFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
 //        Firebaseから取得した座標をここでマーカーを置く
-        Log.d("LocationActivity", key + " " + kind + " " + content + " " + latitude + " " + longitude);
+//        Log.d("LocationActivity", key + " " + kind + " " + content + " " + latitude + " " + longitude);
 //        マーカーを自由に画像を置く
         Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_location_pin_02);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
@@ -540,7 +540,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void removeFireBaseDataIcon(String key, String kind, String content, String latitude, String longitude) {
 //        Firebaseから削除する座標を取得し、マーカーを取り除く
-        Log.d("LocationActivity", "Delete is " + key + " " + kind + " " + content + " " + latitude + " " + longitude);
+//        Log.d("LocationActivity", "Delete is " + key + " " + kind + " " + content + " " + latitude + " " + longitude);
         Marker deleteMarker = hashMapMarker.get(key);
         deleteMarker.remove();
         hashMapMarker.remove(key);
@@ -562,13 +562,13 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        Log.d("LocationActivity", "タッチしているのは" + String.valueOf(marker));
-        Log.d("LocationActivity", "自分のマーカーは" + String.valueOf(deleteCheckMarker));
+//        Log.d("LocationActivity", "タッチしているのは" + String.valueOf(marker));
+//        Log.d("LocationActivity", "自分のマーカーは" + String.valueOf(deleteCheckMarker));
 
         Marker checkMyPlace = hashMapMarker.get(myPlace);
 
         if (checkMyPlace.equals(marker)) {
-            Log.d("LocationActivity", "一致しています！");
+//            Log.d("LocationActivity", "一致しています！");
             deleteLayout.setVisibility(View.INVISIBLE);
 
         } else {
@@ -588,7 +588,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void deleteMarker(View v) {
-        Log.d("LocationActivity", String.valueOf(deleteCheckMarker) + "\n" + String.valueOf(deleteLocationMarker));
+//        Log.d("LocationActivity", String.valueOf(deleteCheckMarker) + "\n" + String.valueOf(deleteLocationMarker));
         if (deleteCheckMarker.equals(deleteLocationMarker)) {
         } else {
             String firebaseKey = deleteHashMapMarker.get(deleteLocationMarker);

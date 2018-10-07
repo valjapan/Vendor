@@ -39,12 +39,12 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        Log.d("AddActivity", "onCreate()");
+//        Log.d("AddActivity", "onCreate()");
 
         Intent intent = getIntent();
         locateX = intent.getDoubleExtra("LocateX", 0);
         locateY = intent.getDoubleExtra("LocateY", 0);
-        Log.d("AddActivity", "渡された座標は\n緯度" + String.valueOf(locateX) + "\n経度" + String.valueOf(locateY) + "\nです。");
+//        Log.d("AddActivity", "渡された座標は\n緯度" + String.valueOf(locateX) + "\n経度" + String.valueOf(locateY) + "\nです。");
 
 
         contentEdiText = (EditText) findViewById(R.id.contentEditText);
@@ -64,7 +64,7 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Spinner spinner = (Spinner) parent;
                 item = (String) spinner.getSelectedItem();
-                Log.d("AddActivity", item);
+//                Log.d("AddActivity", item);
             }
 
             //　アイテムが選択されなかった
@@ -86,8 +86,8 @@ public class AddActivity extends AppCompatActivity implements OnMapReadyCallback
         if (TextUtils.isEmpty(context)) {
             context = "特になし";
         }
-        Log.d("AddActivity", "保存ボタンを押しました");
-        Log.d("AddActivity", "EditTextの内容は -> " + context);
+//        Log.d("AddActivity", "保存ボタンを押しました");
+//        Log.d("AddActivity", "EditTextの内容は -> " + context);
 
         PlaceData placeData = new PlaceData(key, item, context, latitude, longtude);
 
